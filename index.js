@@ -45,7 +45,6 @@
             if (val === obj.firstName.toLowerCase() || val === obj.age || val === obj.phone) {
                 table.innerHTML += "<tr>\n                    <td>".concat(obj.firstName, "</td>\n                    <td>").concat(obj.lastName, "</td>\n                    <td>").concat(obj.age, "</td>\n                    <td>").concat(obj.phone, "</td>\n                </tr>");
                 found = true;
-                // searchInput.value = ""
             }
         });
         if (!found) {
@@ -54,83 +53,76 @@
     }
     // --------------------------------------firstname auto-complete function---------------------------------//
     var autocompleteList = document.getElementById("autocomplete-list");
-    var autocompleteList2 = document.getElementById("autocomplete-list2");
-    var autocompleteList3 = document.getElementById("autocomplete-list3");
-    function autocomplete1(val) {
+    function autocomplete(val) {
         autocompleteList.innerHTML = "";
         if (!val)
             return;
-        var filtered = arr.filter(function (person) { return person.firstName.toLowerCase().includes(val.toLowerCase()); });
-        filtered.forEach(function (person) {
+        var notfound = false;
+        arr.forEach(function (person) {
+            var firstName = person.firstName.toLowerCase().includes(val.toLowerCase());
+            var age = person.age.includes(val.trim());
+            var phone = person.phone.includes(val.trim());
+            if (!firstName && !age && !phone) {
+                notfound = true;
+            }
+            if (firstName) {
+                var filtered = arr.filter(function (person) { return person.firstName.includes(val.toLowerCase()); });
+                filtered.forEach(function (person) {
+                    var item = document.createElement("div");
+                    item.innerHTML = "".concat(person.firstName);
+                    item.addEventListener("click", function () {
+                        var searchInput = document.getElementById("inputField");
+                        searchInput.value = person.firstName;
+                        search(person.firstName.toLowerCase());
+                        autocompleteList.innerHTML = "";
+                    });
+                    autocompleteList.appendChild(item);
+                });
+            }
+            else if (age) {
+                var filtered = arr.filter(function (person) { return person.age.includes(val.toLowerCase()); });
+                filtered.forEach(function (person) {
+                    var item = document.createElement("div");
+                    item.innerHTML = "".concat(person.age);
+                    item.addEventListener("click", function () {
+                        var searchInput = document.getElementById("inputField");
+                        searchInput.value = person.age;
+                        search(person.age);
+                        autocompleteList.innerHTML = "";
+                    });
+                    autocompleteList.appendChild(item);
+                });
+            }
+            else if (phone) {
+                var filtered = arr.filter(function (person) { return person.phone.includes(val.toLowerCase()); });
+                filtered.forEach(function (person) {
+                    var item = document.createElement("div");
+                    item.innerHTML = "".concat(person.phone);
+                    item.addEventListener("click", function () {
+                        var searchInput = document.getElementById("inputField");
+                        searchInput.value = person.phone;
+                        search(person.phone);
+                        autocompleteList.innerHTML = "";
+                    });
+                    autocompleteList.appendChild(item);
+                });
+            }
+        });
+        if (notfound) {
             var item = document.createElement("div");
-            item.innerHTML = "".concat(person.firstName);
+            item.innerHTML = "".concat(searchInput.value);
             item.addEventListener("click", function () {
                 var searchInput = document.getElementById("inputField");
-                searchInput.value = person.firstName;
-                search(person.firstName.toLowerCase());
+                search(searchInput.value);
                 autocompleteList.innerHTML = "";
             });
             autocompleteList.appendChild(item);
-        });
+        }
     }
-    // ---------------------------------------age auto-complete function-------------------------------------------//
-    function autocomplete2(age) {
-        autocompleteList2.innerHTML = "";
-        if (!age)
-            return;
-        var filtered = arr.filter(function (person) { return person.age.includes(age.trim()); });
-        filtered.forEach(function (person) {
-            var item = document.createElement("div");
-            item.innerHTML = "".concat(person.age);
-            item.addEventListener("click", function () {
-                var searchInput2 = document.getElementById("inputField2");
-                searchInput2.value = person.age;
-                search(person.age);
-                autocompleteList2.innerHTML = "";
-            });
-            autocompleteList2.appendChild(item);
-        });
-    }
-    // ----------------------------------phone-number auto-complete function--------------------------------------//
-    function autocomplete3(phoneNum) {
-        autocompleteList3.innerHTML = "";
-        if (!phoneNum)
-            return;
-        var filtered = arr.filter(function (person) { return person.phone.includes(phoneNum.trim()); });
-        filtered.forEach(function (person) {
-            var item = document.createElement("div");
-            item.innerHTML = "".concat(person.phone);
-            item.addEventListener("click", function () {
-                var searchInput3 = document.getElementById("inputField3");
-                searchInput3.value = person.phone;
-                search(person.phone);
-                autocompleteList3.innerHTML = "";
-            });
-            autocompleteList3.appendChild(item);
-        });
-    }
-    //--------------------------add event listener to the search inputs-------------------------------//
+    //--------------------------add event listener to the search input-------------------------------//
     var searchInput = document.getElementById("inputField");
     searchInput.addEventListener("input", function () {
-        autocompleteList2.innerHTML = "";
-        autocompleteList3.innerHTML = "";
-        var val = searchInput.value.trim().toLowerCase();
-        autocomplete1(val);
-    });
-    // --------------------------------------------------------------------------------------------//
-    var searchInput2 = document.getElementById("inputField2");
-    searchInput2.addEventListener("input", function () {
-        autocompleteList.innerHTML = "";
-        autocompleteList3.innerHTML = "";
-        var num = searchInput2.value;
-        autocomplete2(num);
-    });
-    // --------------------------------------------------------------------------------------------//
-    var searchInput3 = document.getElementById("inputField3");
-    searchInput3.addEventListener("input", function () {
-        autocompleteList2.innerHTML = "";
-        autocompleteList.innerHTML = "";
-        var phoneNum = searchInput3.value;
-        autocomplete3(phoneNum);
+        var val = searchInput.value.trim();
+        autocomplete(val);
     });
 })();

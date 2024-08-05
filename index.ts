@@ -70,107 +70,90 @@
             table.innerHTML += `<tr><td style="text-align:center" colspan="4">No results found</td></tr>`;
         }
     }
-
-
     // --------------------------------------firstname auto-complete function---------------------------------//
     const autocompleteList = document.getElementById("autocomplete-list") as HTMLElement;
 
-    const autocompleteList2 = document.getElementById("autocomplete-list2") as HTMLElement;
-    const autocompleteList3 = document.getElementById("autocomplete-list3") as HTMLElement;
-
-    function autocomplete1(val: string) {
+    function autocomplete(val: string) {
         autocompleteList.innerHTML = "";
 
         if (!val) return;
 
-        const filtered = arr.filter(person => person.firstName.toLowerCase().includes(val.toLowerCase()));
+        let notfound= false;
 
-        filtered.forEach(person => {
+        arr.forEach(person => {
+
+            let firstName = person.firstName.toLowerCase().includes(val.toLowerCase());
+            let age = person.age.includes(val.trim());
+            let phone = person.phone.includes(val.trim());
+            
+            if(!firstName&& !age && !phone){
+                 notfound= true;
+            }
+           
+            if (firstName) {
+                const filtered = arr.filter(person => person.firstName.includes(val.toLowerCase()))
+
+                filtered.forEach(person => {
+                    const item = document.createElement("div");
+                    item.innerHTML = `${person.firstName}`;
+                    item.addEventListener("click", () => {
+                        const searchInput = document.getElementById("inputField") as HTMLInputElement;
+                        searchInput.value = person.firstName;
+                        search(person.firstName.toLowerCase());
+                        autocompleteList.innerHTML = "";
+                    });
+                    autocompleteList.appendChild(item);
+                });
+            }
+            else if (age) {
+                const filtered = arr.filter(person => person.age.includes(val.toLowerCase()))
+                filtered.forEach(person => {
+                    const item = document.createElement("div");
+                    item.innerHTML = `${person.age}`;
+                    item.addEventListener("click", () => {
+                        const searchInput = document.getElementById("inputField") as HTMLInputElement;
+                        searchInput.value = person.age;
+                        search(person.age);
+                        autocompleteList.innerHTML = "";
+                    });
+                    autocompleteList.appendChild(item);
+                });
+            }
+
+            else if (phone) {
+                const filtered = arr.filter(person => person.phone.includes(val.toLowerCase()))
+                filtered.forEach(person => {
+                    const item = document.createElement("div");
+                    item.innerHTML = `${person.phone}`;
+                    item.addEventListener("click", () => {
+                        const searchInput = document.getElementById("inputField") as HTMLInputElement;
+                        searchInput.value = person.phone;
+                        search(person.phone);
+                        autocompleteList.innerHTML = "";
+                    });
+                    autocompleteList.appendChild(item);
+                });
+            }
+         
+        })
+         if(notfound){
+
             const item = document.createElement("div");
-            item.innerHTML = `${person.firstName}`;
+            item.innerHTML = `${searchInput.value}`;
             item.addEventListener("click", () => {
                 const searchInput = document.getElementById("inputField") as HTMLInputElement;
-                searchInput.value = person.firstName;
-                search(person.firstName.toLowerCase());
+                search(searchInput.value);
                 autocompleteList.innerHTML = "";
             });
             autocompleteList.appendChild(item);
-        });
-
     }
-    // ---------------------------------------age auto-complete function-------------------------------------------//
-
-    function autocomplete2(age: string) {
-        autocompleteList2.innerHTML = "";
-
-        if (!age) return;
-
-        const filtered = arr.filter(person => person.age.includes(age.trim()));
-
-        filtered.forEach(person => {
-            const item = document.createElement("div");
-            item.innerHTML = `${person.age}`;
-            item.addEventListener("click", () => {
-                const searchInput2 = document.getElementById("inputField2") as HTMLInputElement;
-                searchInput2.value = person.age;
-                search(person.age);
-                autocompleteList2.innerHTML = "";
-            });
-            autocompleteList2.appendChild(item);
-        });
-
     }
-    // ----------------------------------phone-number auto-complete function--------------------------------------//
-
-    function autocomplete3(phoneNum: string) {
-        autocompleteList3.innerHTML = "";
-
-        if (!phoneNum) return;
-
-        const filtered = arr.filter(person => person.phone.includes(phoneNum.trim()));
-
-        filtered.forEach(person => {
-            const item = document.createElement("div");
-            item.innerHTML = `${person.phone}`;
-            item.addEventListener("click", () => {
-                const searchInput3 = document.getElementById("inputField3") as HTMLInputElement;
-                searchInput3.value = person.phone;
-                search(person.phone);
-                autocompleteList3.innerHTML = "";
-            });
-            autocompleteList3.appendChild(item);
-        });
-
-    }
-
-    //--------------------------add event listener to the search inputs-------------------------------//
+    //--------------------------add event listener to the search input-------------------------------//
     const searchInput = document.getElementById("inputField") as HTMLInputElement;
 
     searchInput.addEventListener("input", () => {
-        autocompleteList2.innerHTML = "";
-        autocompleteList3.innerHTML = "";
-        const val = searchInput.value.trim().toLowerCase();
-        autocomplete1(val);
+
+        const val = searchInput.value.trim();
+        autocomplete(val)
     });
-    // --------------------------------------------------------------------------------------------//
-    const searchInput2 = document.getElementById("inputField2") as HTMLInputElement;
-
-    searchInput2.addEventListener("input", () => {
-        autocompleteList.innerHTML = "";
-        autocompleteList3.innerHTML = "";
-        const num = searchInput2.value;
-        autocomplete2(num);
-    });
-    // --------------------------------------------------------------------------------------------//
-
-    const searchInput3 = document.getElementById("inputField3") as HTMLInputElement;
-
-    searchInput3.addEventListener("input", () => {
-        autocompleteList2.innerHTML = "";
-        autocompleteList.innerHTML = "";
-        const phoneNum = searchInput3.value;
-        autocomplete3(phoneNum);
-    });
-
-
 })();
